@@ -1,0 +1,58 @@
+name: nextturn-database
+
+# ==============================================================================
+# NextTurn Relational Database Stack (MySQL 8.4 LTS)
+# Cơ sở dữ liệu quan hệ cho NextTurn Backend & Keycloak IAM trên cùng mạng Podman
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # MySQL Database Server
+  # Hệ quản trị cơ sở dữ liệu quan hệ chuẩn MySQL tương thích Oracle HeatWave
+  # ----------------------------------------------------------------------------
+  mysql:
+    container_name: nextturn-mysql
+    image: mysql:${MYSQL_IMAGE_TAG:-9.7-oraclelinux9}
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-nextturn_db}
+      MYSQL_USER: ${MYSQL_USER:-nextturn}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-nextturn_dev_secret}
+    volumes:
+      # Persistent storage for MySQL data files
+      - mysql_data:/var/lib/mysql
+      # Auto-provisioning scripts for nextturn_db and keycloak_iam schemas
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    ports:
+      # Host port mapping for local Spring Boot, migrations, or DBeaver / Workbench
+      - "${MYSQL_PORT:-3306}:3306"
+    networks:
+      nextturn-network:
+        aliases:
+          - nextturn-mysql
+          - mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD} || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+# ------------------------------------------------------------------------------
+# Persistent Volumes (Ổ lưu trữ dữ liệu bền vững)
+# ------------------------------------------------------------------------------
+volumes:
+  mysql_data:
+    name: nextturn_mysql_data
+    driver: local
+
+# ------------------------------------------------------------------------------
+# Shared Network (Mạng cầu nối Podman dùng chung giữa các dịch vụ NextTurn)
+# ------------------------------------------------------------------------------
+networks:
+  nextturn-network:
+    name: nextturn-network
+    external: true
