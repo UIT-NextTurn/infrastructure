@@ -1,0 +1,59 @@
+name: nextturn-cache
+
+# ==============================================================================
+# NextTurn In-Memory Cache & Real-Time Queue Store (Valkey)
+# Hệ thống lưu trữ bộ nhớ đệm và hàng đợi thời gian thực mã nguồn mở hiệu năng cao
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # Valkey Server (High-Performance In-Memory Data Store)
+  # Drop-in replacement for Redis maintained by the Linux Foundation
+  # ----------------------------------------------------------------------------
+  valkey:
+    container_name: nextturn-valkey
+    image: valkey/valkey:${VALKEY_IMAGE_TAG:-9.0-alpine}
+    restart: unless-stopped
+    command: >-
+      sh -c 'if [ -n "$$VALKEY_PASSWORD" ]; then
+        exec valkey-server /etc/valkey/valkey.conf --requirepass "$$VALKEY_PASSWORD"
+      else
+        exec valkey-server /etc/valkey/valkey.conf
+      fi'
+    env_file:
+      - .env
+    volumes:
+      # Persistent cache & queue storage
+      - valkey_data:/data
+    ports:
+      # Default Valkey / Redis client port on host
+      - "${VALKEY_PORT:-6379}:6379"
+    networks:
+      - nextturn-network
+    healthcheck:
+      test: >-
+        sh -c 'if [ -n "$$VALKEY_PASSWORD" ]; then
+          valkey-cli -a "$$VALKEY_PASSWORD" ping | grep -q PONG || exit 1
+        else
+          valkey-cli ping | grep -q PONG || exit 1
+        fi'
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+# ------------------------------------------------------------------------------
+# Persistent Volumes (Ổ lưu trữ dữ liệu bền vững)
+# ------------------------------------------------------------------------------
+volumes:
+  valkey_data:
+    name: nextturn_valkey_data
+    driver: local
+
+# ------------------------------------------------------------------------------
+# Shared Network (Mạng cầu nối dùng chung giữa các dịch vụ NextTurn)
+# ------------------------------------------------------------------------------
+networks:
+  nextturn-network:
+    name: nextturn-network
+    external: true
