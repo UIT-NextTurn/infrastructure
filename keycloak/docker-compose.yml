@@ -36,7 +36,8 @@ services:
       # HTTP and Network configuration
       KC_HTTP_ENABLED: "true"
       KC_HOSTNAME_STRICT: "false"
-      KC_HOSTNAME: "localhost"
+      KC_HOSTNAME: ${KEYCLOAK_HOSTNAME}
+      KC_HOSTNAME_PORT: ${KEYCLOAK_PORT}
       KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "false"
 
       # Observability & Health endpoints
