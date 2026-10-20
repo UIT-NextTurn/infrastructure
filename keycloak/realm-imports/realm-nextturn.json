@@ -18,19 +18,47 @@
       {
         "name": "ROLE_SUPERADMIN",
         "description": "Global Platform Owner - Platform-wide governance and tenant oversight"
-      },
-      {
-        "name": "ROLE_ADMIN",
-        "description": "Tenant Administrator - Business settings, services, shifts, and staff provisioning"
-      },
-      {
-        "name": "ROLE_COUNTER",
-        "description": "Counter Staff - Queue calling, triage intake, and ticket status progression"
       }
-    ]
+    ],
+    "client": {
+      "nextturn-backend": [
+        {
+          "name": "TENANT_ADMIN",
+          "description": "Tenant Administrator - Business settings, services, shifts, and staff provisioning"
+        },
+        {
+          "name": "COUNTER_STAFF",
+          "description": "Counter Staff - Queue calling, triage intake, and ticket status progression"
+        }
+      ]
+    }
   },
+  "clientScopes": [
+    {
+      "name": "organization",
+      "description": "Organization membership and tenant context claims",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "organization-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-organization-membership-mapper",
+          "consentRequired": false,
+          "config": {
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "claim.name": "organization"
+          }
+        }
+      ]
+    }
+  ],
   "defaultDefaultClientScopes": [
-    "role_list",
     "profile",
     "email"
   ],
@@ -38,15 +66,20 @@
     {
       "clientId": "nextturn-backend",
       "name": "NextTurn Backend Resource Server",
-      "description": "Confidential client for token verification and Admin REST API orchestration",
+      "description": "Confidential client handling Direct Access Grants, token verification, and Admin REST API orchestration",
       "enabled": true,
       "publicClient": false,
       "bearerOnly": false,
       "standardFlowEnabled": false,
-      "directAccessGrantsEnabled": false,
+      "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": true,
       "clientAuthenticatorType": "client-secret",
-      "secret": "replace-with-secure-backend-secret"
+      "secret": "replace-with-secure-backend-secret",
+      "defaultClientScopes": [
+        "profile",
+        "email",
+        "organization"
+      ]
     }
   ]
 }

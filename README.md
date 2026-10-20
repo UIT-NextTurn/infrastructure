@@ -32,8 +32,8 @@ flowchart TD
         end
 
         subgraph AppServices["Application Workloads"]
-            Backend["Spring Boot Backend<br/>(host.docker.internal:8080)"]
-            Frontend["NextTurn Web App<br/>(host.docker.internal:3000)"]
+            Backend["Spring Boot Backend<br/>(:8080)"]
+            Frontend["NextTurn Frontend SPA<br/>(Hosted by Caddy)"]
         end
     end
 
