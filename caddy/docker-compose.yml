@@ -1,0 +1,63 @@
+name: nextturn-ingress
+
+# ==============================================================================
+# NextTurn Ingress Gateway & Frontend Host (Caddy)
+# Cổng điều hướng phân phối lưu lượng và máy chủ triển khai Frontend (FE) cho NextTurn
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # Caddy Web Server & Reverse Proxy
+  # Máy chủ proxy ngược hiện đại & phục vụ file tĩnh HTTP/2, HTTP/3 tự động
+  # ----------------------------------------------------------------------------
+  caddy:
+    container_name: nextturn-caddy
+    image: caddy:${CADDY_IMAGE_TAG}
+    restart: unless-stopped
+    env_file:
+      - .env
+    extra_hosts:
+      # Allows Caddy inside the container to proxy traffic to host-running dev servers (Backend :8080)
+      - "host.docker.internal:host-gateway"
+      - "host.containers.internal:host-gateway"
+    volumes:
+      # Mount custom routing rules
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # Persistent storage for TLS certificates and keys
+      - caddy_data:/data
+      # Persistent storage for runtime configurations
+      - caddy_config:/config
+    ports:
+      # HTTP Port
+      - "${CADDY_HTTP_PORT:-80}:80"
+      # HTTPS Port (TCP)
+      - "${CADDY_HTTPS_PORT:-443}:443"
+      # Caddy Admin API
+      - "${CADDY_ADMIN_PORT:-2019}:2019"
+    networks:
+      - nextturn-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:2019/metrics || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+# ------------------------------------------------------------------------------
+# Persistent Volumes (Ổ lưu trữ chứng chỉ SSL và cấu hình Caddy)
+# ------------------------------------------------------------------------------
+volumes:
+  caddy_data:
+    name: nextturn_caddy_data
+    driver: local
+  caddy_config:
+    name: nextturn_caddy_config
+    driver: local
+
+# ------------------------------------------------------------------------------
+# Shared Network (Mạng cầu nối Podman dùng chung giữa các dịch vụ NextTurn)
+# ------------------------------------------------------------------------------
+networks:
+  nextturn-network:
+    name: nextturn-network
+    external: true
