@@ -1,0 +1,72 @@
+name: nextturn-iam
+
+# ==============================================================================
+# NextTurn Identity & Access Management (Keycloak)
+# Hệ thống quản lý danh tính & xác thực tập trung cho NextTurn
+# Kết nối trực tiếp tới Oracle MySQL HeatWave (schema riêng: keycloak_iam)
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # Keycloak Authentication Server (Quarkus runtime)
+  # Máy chủ xác thực OIDC / OAuth2 cho nền tảng đa khách thuê (multi-tenant)
+  # ----------------------------------------------------------------------------
+  keycloak:
+    container_name: nextturn-keycloak
+    image: quay.io/keycloak/keycloak:${KEYCLOAK_IMAGE_TAG:-26.1.0}
+    restart: unless-stopped
+    command:
+      - start-dev
+      - --import-realm
+    env_file:
+      - .env
+    environment:
+      # Database connection (MySQL on nextturn-network or Oracle MySQL HeatWave)
+      KC_DB: mysql
+      KC_DB_URL: ${KC_DB_URL:-jdbc:mysql://${MYSQL_HOST:-nextturn-mysql}:${MYSQL_PORT:-3306}/${KEYCLOAK_DB_NAME:-keycloak_iam}?useSSL=${MYSQL_USE_SSL:-false}&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8}
+      KC_DB_USERNAME: ${KEYCLOAK_DB_USER:-keycloak}
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+
+      # Initial Admin Credentials (KC_BOOTSTRAP_ADMIN_* for Keycloak 26+, KEYCLOAK_ADMIN_* for backwards compatibility)
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USER:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+
+      # HTTP and Network configuration
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
+
+      # Observability & Health endpoints
+      KC_HEALTH_ENABLED: "true"
+      KC_METRICS_ENABLED: "true"
+      KC_LOG_LEVEL: ${KEYCLOAK_LOG_LEVEL:-INFO}
+    extra_hosts:
+      # Allows Keycloak to reach host-running or VCN MySQL services
+      - "host.docker.internal:host-gateway"
+      - "host.containers.internal:host-gateway"
+    volumes:
+      # Mount directory for auto-importing realms on startup
+      - ./realm-imports:/opt/keycloak/data/import:ro
+    ports:
+      # Port 8180 on host avoids conflict with Spring Boot backend (server.port: 8080)
+      - "${KEYCLOAK_PORT:-8180}:8080"
+      - "${KEYCLOAK_HTTPS_PORT:-8443}:8443"
+      - "${KEYCLOAK_MANAGEMENT_PORT:-9000}:9000"
+    networks:
+      - nextturn-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health/ready || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+# ------------------------------------------------------------------------------
+# Shared Network (Mạng cầu nối Podman dùng chung giữa các dịch vụ NextTurn)
+# ------------------------------------------------------------------------------
+networks:
+  nextturn-network:
+    name: nextturn-network
+    external: true

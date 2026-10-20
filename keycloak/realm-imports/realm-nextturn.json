@@ -1,0 +1,52 @@
+{
+  "realm": "nextturn",
+  "displayName": "NextTurn Multi-Tenant Platform",
+  "enabled": true,
+  "sslRequired": "external",
+  "organizationsEnabled": true,
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "failureFactor": 5,
+  "waitIncrementSeconds": 60,
+  "maxFailureWaitSeconds": 900,
+  "roles": {
+    "realm": [
+      {
+        "name": "ROLE_SUPERADMIN",
+        "description": "Global Platform Owner - Platform-wide governance and tenant oversight"
+      },
+      {
+        "name": "ROLE_ADMIN",
+        "description": "Tenant Administrator - Business settings, services, shifts, and staff provisioning"
+      },
+      {
+        "name": "ROLE_COUNTER",
+        "description": "Counter Staff - Queue calling, triage intake, and ticket status progression"
+      }
+    ]
+  },
+  "defaultDefaultClientScopes": [
+    "role_list",
+    "profile",
+    "email"
+  ],
+  "clients": [
+    {
+      "clientId": "nextturn-backend",
+      "name": "NextTurn Backend Resource Server",
+      "description": "Confidential client for token verification and Admin REST API orchestration",
+      "enabled": true,
+      "publicClient": false,
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "replace-with-secure-backend-secret"
+    }
+  ]
+}
