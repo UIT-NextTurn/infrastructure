@@ -19,7 +19,7 @@ services:
       - valkey_data:/data:Z
     # Chỉ mở ra localhost của máy host nếu cần debug; bỏ qua nếu chỉ chạy trong container network
     ports:
-      - "127.0.0.1:${VALKEY_PORT:-6379}:6379"
+      - "${VALKEY_PORT:-6379}:6379"
     networks:
       - nextturn-network
     healthcheck:
