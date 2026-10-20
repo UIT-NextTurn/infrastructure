@@ -1,0 +1,19 @@
+name: nextturn-infrastructure
+
+# ==============================================================================
+# NextTurn Infrastructure - Root Orchestration
+# Hợp nhất và điều phối toàn bộ các ngăn xếp công nghệ (MySQL, Caddy, Keycloak, Valkey)
+# ==============================================================================
+# Note: You can run each technology independently from its own folder:
+#   cd mysql && podman compose up -d
+#   cd keycloak && podman compose up -d
+#   cd valkey && podman compose up -d
+#   cd caddy && podman compose up -d
+# Or manage all services concurrently from this root compose file.
+# ==============================================================================
+
+include:
+  - mysql/docker-compose.yml
+  - caddy/docker-compose.yml
+  - keycloak/docker-compose.yml
+  - valkey/docker-compose.yml

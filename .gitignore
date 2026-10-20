@@ -1,0 +1,21 @@
+# ==============================================================================
+# NextTurn Infrastructure - Git Ignore
+# ==============================================================================
+
+# Ignore local environment secrets across all service folders
+.env
+**/.env
+.env.*
+**/.env.*
+*.env.local
+**/*.env.local
+
+# Allow example templates
+!.env.example
+!**/.env.example
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
