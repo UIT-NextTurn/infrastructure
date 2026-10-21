@@ -16,10 +16,7 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    extra_hosts:
-      # Allows Caddy inside the container to proxy traffic to host-running dev servers (Backend :8080)
-      - "host.docker.internal:host-gateway"
-      - "host.containers.internal:host-gateway"
+
     volumes:
       # Mount custom routing rules
       - ./Caddyfile:/etc/caddy/Caddyfile:ro

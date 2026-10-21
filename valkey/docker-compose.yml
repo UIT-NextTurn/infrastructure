@@ -1,45 +1,37 @@
 name: nextturn-cache
 
-# ==============================================================================
-# NextTurn In-Memory Cache & Real-Time Queue Store (Valkey)
-# Hệ thống lưu trữ bộ nhớ đệm và hàng đợi thời gian thực mã nguồn mở hiệu năng cao
-# ==============================================================================
-
 services:
-  # ----------------------------------------------------------------------------
-  # Valkey Server (High-Performance In-Memory Data Store)
-  # Drop-in replacement for Redis maintained by the Linux Foundation
-  # ----------------------------------------------------------------------------
   valkey:
     container_name: nextturn-valkey
-    image: valkey/valkey:${VALKEY_IMAGE_TAG:-9.0-alpine}
+    image: valkey/valkey:${VALKEY_IMAGE_TAG:-8.0-alpine}
     restart: unless-stopped
+    # Khởi chạy trực tiếp: Bật AOF để bảo vệ Queue, cấu hình mật khẩu nếu có
     command: >-
       sh -c 'if [ -n "$$VALKEY_PASSWORD" ]; then
-        exec valkey-server /etc/valkey/valkey.conf --requirepass "$$VALKEY_PASSWORD"
+        exec valkey-server --appendonly yes --requirepass "$$VALKEY_PASSWORD"
       else
-        exec valkey-server /etc/valkey/valkey.conf
+        exec valkey-server --appendonly yes
       fi'
     env_file:
       - .env
     volumes:
-      # Persistent cache & queue storage
-      - valkey_data:/data
+      # Persistent cache & AOF/RDB queue storage
+      - valkey_data:/data:Z
+    # Chỉ mở ra localhost của máy host nếu cần debug; bỏ qua nếu chỉ chạy trong container network
     ports:
-      # Default Valkey / Redis client port on host
       - "${VALKEY_PORT:-6379}:6379"
     networks:
       - nextturn-network
     healthcheck:
       test: >-
         sh -c 'if [ -n "$$VALKEY_PASSWORD" ]; then
-          valkey-cli -a "$$VALKEY_PASSWORD" ping | grep -q PONG || exit 1
+          valkey-cli --no-auth-warning -a "$$VALKEY_PASSWORD" ping | grep -q PONG
         else
-          valkey-cli ping | grep -q PONG || exit 1
+          valkey-cli ping | grep -q PONG
         fi'
-      interval: 5s
+      interval: 10s
       timeout: 3s
-      retries: 5
+      retries: 3
       start_period: 5s
 
 # ------------------------------------------------------------------------------
