@@ -1,6 +1,6 @@
-# NextTurn Infrastructure (Hạ tầng dịch vụ)
+# NextTurn Infrastructure
 
-This directory contains containerized service definitions and orchestration (*điều phối hạ tầng*) for the NextTurn platform, partitioned into technology-specific stacks operating on a shared bridge network.
+This directory contains containerized service definitions and orchestration for the NextTurn platform, partitioned into technology-specific stacks operating on a shared bridge network.
 
 ---
 
@@ -54,37 +54,36 @@ flowchart TD
 ```text
 infrastructure/
 ├── .gitignore                   # Ignores sensitive .env files across all stacks
+├── Makefile                     # Multi-stack orchestration controls (up, down, restart, logs)
 ├── README.md                    # Infrastructure master documentation
 ├── docker-compose.yml           # Root compose orchestrator (merges all stacks via include)
 ├── init-network.sh              # Bash script to create Podman shared 'nextturn-network'
 │
 ├── mysql/                       # 🐬 Relational Database (MySQL 8.4 LTS)
 │   ├── docker-compose.yml       # MySQL container, volume & network definitions
-│   ├── conf.d/my.cnf            # UTF8mb4 & performance tuning
-│   ├── initdb/01-init-schemas.sql # Automated schema & user provisioning
+│   ├── initdb/
+│   │   └── 01-init-schemas.sql  # Automated schema & user provisioning (nextturn_db, keycloak_iam)
 │   ├── .env.example             # Template for passwords and ports
 │   ├── .env                     # Local active secrets (ignored by Git)
 │   └── README.md                # MySQL operational guide
 │
-├── caddy/                       # 🌐 Reverse Proxy, SSL Gateway & Frontend Host
-│   ├── docker-compose.yml       # Caddy container and volume definitions
-│   ├── Caddyfile                # Path routing, security headers & static FE serving
-│   ├── html/                    # 🚀 Frontend build output directory (/srv/frontend)
-│   ├── .env.example             # Template for Caddy ports, domain, and frontend path
+├── caddy/                       # 🌐 Unified Ingress Gateway & Reverse Proxy
+│   ├── docker-compose.yml       # Caddy container, volume & network definitions
+│   ├── Caddyfile                # Ingress routing rules for Keycloak, Backend API, and Frontend
+│   ├── .env.example             # Template for Caddy ports, domain, and upstream endpoints
 │   ├── .env                     # Local active secrets (ignored by Git)
 │   └── README.md                # Caddy operational guide
 │
 ├── keycloak/                    # 🔐 Identity & Access Management (OIDC / OAuth 2.0)
 │   ├── docker-compose.yml       # Keycloak orchestration (connects to Oracle MySQL HeatWave)
+│   ├── realm-imports/
+│   │   └── realm-nextturn.json  # Starter realm with 4 NextTurn roles & OIDC clients
 │   ├── .env.example             # Template for Keycloak admin credentials & HeatWave endpoint
 │   ├── .env                     # Local active secrets (ignored by Git)
-│   ├── realm-imports/           # Pre-configured realms auto-loaded on boot
-│   │   └── realm-nextturn.json  # Starter realm with 4 NextTurn roles & OIDC clients
 │   └── README.md                # Keycloak operational guide
 │
 └── valkey/                      # ⚡ High-Performance Cache & Real-Time Queue Store
-    ├── docker-compose.yml       # Valkey container and persistent storage
-    ├── valkey.conf              # Production-tuned config (AOF, LRU eviction, persistence)
+    ├── docker-compose.yml       # Valkey container and persistent storage definitions
     ├── .env.example             # Template for Valkey port & password
     ├── .env                     # Local active secrets (ignored by Git)
     └── README.md                # Valkey operational guide
@@ -104,8 +103,8 @@ networks:
 ```
 
 ### Why a Shared Network?
-1. **Service Discovery (*Khám phá dịch vụ nội bộ*)**: Caddy can reach Keycloak via `nextturn-keycloak:8080` and Valkey via `nextturn-valkey:6379` using Podman internal DNS without exposing sensitive ports publicly.
-2. **Decoupled Lifecycle (*Vòng đời tách biệt*)**: Running `podman compose down` inside `valkey/` will never disconnect or delete the network used by `keycloak/` or `caddy/`.
+1. **Service Discovery**: Caddy can reach Keycloak via `nextturn-keycloak:8080` and Valkey via `nextturn-valkey:6379` using Podman internal DNS without exposing sensitive ports publicly.
+2. **Decoupled Lifecycle**: Running `podman compose down` inside `valkey/` will never disconnect or delete the network used by `keycloak/` or `caddy/`.
 
 ### Network Initialization (Podman on Linux)
 Before starting services for the first time, initialize the common Podman network:

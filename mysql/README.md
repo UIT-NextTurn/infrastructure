@@ -1,8 +1,8 @@
 # MySQL Relational Database Stack
 
-This directory contains the Podman Compose stack for **MySQL 8.4 LTS** (an enterprise-grade relational database management system (*hệ quản trị cơ sở dữ liệu quan hệ*) with native ARM64 / aarch64 support and full wire-compatibility with Oracle MySQL HeatWave).
+This directory contains the Podman Compose stack for **MySQL 8.4 LTS** (an enterprise-grade relational database management system with native ARM64 / aarch64 support and full wire-compatibility with Oracle MySQL HeatWave).
 
-In NextTurn, this MySQL service operates on the shared Podman bridge network `nextturn-network`, serving two isolated schemas (*lược đồ cơ sở dữ liệu*):
+In NextTurn, this MySQL service operates on the shared Podman bridge network `nextturn-network`, serving two isolated schemas:
 1. **`nextturn_db`**: Primary business application database for the Spring Boot backend (queues, tickets, counters, multi-tenant configs).
 2. **`keycloak_iam`**: Dedicated identity and access management schema used by Keycloak.
 
@@ -13,8 +13,6 @@ In NextTurn, this MySQL service operates on the shared Podman bridge network `ne
 ```text
 mysql/
 ├── docker-compose.yml       # MySQL container, volume & network definitions
-├── conf.d/
-│   └── my.cnf               # Custom server tuning (UTF8mb4, buffer pool, connection limits)
 ├── initdb/
 │   └── 01-init-schemas.sql  # Automated provisioning script for schemas and user privileges
 ├── .env.example             # Template for MySQL passwords and ports

@@ -6,12 +6,12 @@
 -- 1. Create Central Master Schema (NextTurn Core Management)
 CREATE DATABASE IF NOT EXISTS `nextturn_master`
   CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
+  COLLATE utf8mb4_0900_ai_ci;
 
 -- 2. Create IAM Schema (Keycloak Authentication Server)
 CREATE DATABASE IF NOT EXISTS `keycloak_iam`
   CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
+  COLLATE utf8mb4_0900_ai_ci;
 
 -- 3. Dedicated User for Keycloak IAM
 CREATE USER IF NOT EXISTS 'keycloak'@'%' IDENTIFIED BY 'keycloak_dev_secret';
@@ -29,5 +29,5 @@ GRANT ALL PRIVILEGES ON `nextturn_master`.* TO 'nextturn'@'%';
 -- 4.3. Cấp toàn quyền trên toàn bộ các Schema Tenant hiện tại và sinh ra sau này
 GRANT ALL PRIVILEGES ON `tenant\_%`.* TO 'nextturn'@'%';
 
--- 5. Cho phép root kết nối từ các container nội bộ (Dùng cho migration / debug tool)
+-- 5. Cho phép root kết nối từ các container nội bộ
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;

@@ -3,7 +3,7 @@ name: nextturn-iam
 # ==============================================================================
 # NextTurn Identity & Access Management (Keycloak)
 # Hệ thống quản lý danh tính & xác thực tập trung cho NextTurn
-# Kết nối trực tiếp tới Oracle MySQL HeatWave (schema riêng: keycloak_iam)
+# Kết nối trực tiếp tới Oracle MySQL HeatWave
 # ==============================================================================
 
 services:
@@ -64,7 +64,7 @@ services:
       start_period: 30s
 
 # ------------------------------------------------------------------------------
-# Shared Network (Mạng cầu nối Podman dùng chung giữa các dịch vụ NextTurn)
+# Shared Network
 # ------------------------------------------------------------------------------
 networks:
   nextturn-network:

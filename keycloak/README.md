@@ -1,6 +1,6 @@
 # Keycloak Identity & Access Management (IAM)
 
-This directory contains the Podman Compose stack for **Keycloak** (OIDC / OAuth 2.0 Identity Provider) backed by an external **Oracle MySQL HeatWave** database instance using a dedicated schema (*lược đồ cơ sở dữ liệu riêng*).
+This directory contains the Podman Compose stack for **Keycloak** (OIDC / OAuth 2.0 Identity Provider) backed by an external **Oracle MySQL HeatWave** database instance using a dedicated schema.
 
 ---
 
@@ -21,9 +21,9 @@ keycloak/
 ## 🔐 Key Features
 
 - **External MySQL HeatWave Backend**: Rather than running a local database container, Keycloak connects directly to Oracle MySQL HeatWave using an isolated database schema (e.g. `keycloak_iam`).
-- **Decoupled Architecture (*Kiến trúc tách rời*)**: Keycloak operates as an independent service attached to the shared Podman network `nextturn-network`.
-- **Conflict Prevention (*Tránh xung đột cổng*)**: Keycloak is mapped to host port **`8180`**, avoiding collisions with the NextTurn Spring Boot backend on port **`8080`**.
-- **Automated Realm Seeding (*Tự động nạp cấu hình Realm*)**: Mounting `./realm-imports` to `/opt/keycloak/data/import` with `--import-realm` imports `realm-nextturn.json` on initial boot.
+- **Decoupled Architecture**: Keycloak operates as an independent service attached to the shared Podman network `nextturn-network`.
+- **Conflict Prevention**: Keycloak is mapped to host port **`8180`**, avoiding collisions with the NextTurn Spring Boot backend on port **`8080`**.
+- **Automated Realm Seeding**: Mounting `./realm-imports` to `/opt/keycloak/data/import` with `--import-realm` imports `realm-nextturn.json` on initial boot.
 
 ---
 
@@ -35,7 +35,7 @@ Before launching Keycloak for the first time, execute the following SQL statemen
 -- 1. Create dedicated IAM schema
 CREATE DATABASE IF NOT EXISTS keycloak_iam 
   CHARACTER SET utf8mb4 
-  COLLATE utf8mb4_unicode_ci;
+  COLLATE utf8mb4_0900_ai_ci;
 
 -- 2. Create user (or grant permissions to existing user)
 CREATE USER IF NOT EXISTS 'keycloak'@'%' IDENTIFIED BY 'your_strong_password';
@@ -93,5 +93,5 @@ podman compose down
 | :--- | :--- | :--- |
 | **Keycloak Admin Console** | [http://localhost:8180/admin](http://localhost:8180/admin) | Login with admin credentials from `.env` (`admin`/`admin`) |
 | **NextTurn Realm Discovery (OIDC)** | `http://localhost:8180/realms/nextturn/.well-known/openid-configuration` | OpenID Connect metadata for Spring Boot / Frontend |
-| **Health Check Probe** | [http://localhost:8180/health/ready](http://localhost:8180/health/ready) | Quarkus readiness probe (*kiểm tra mức độ sẵn sàng*) |
+| **Health Check Probe** | [http://localhost:8180/health/ready](http://localhost:8180/health/ready) | Quarkus readiness probe |
 | **Database Backend** | MySQL HeatWave (schema: `keycloak_iam`) | Managed cloud database |

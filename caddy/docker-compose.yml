@@ -44,7 +44,7 @@ services:
       start_period: 5s
 
 # ------------------------------------------------------------------------------
-# Persistent Volumes (Ổ lưu trữ chứng chỉ SSL và cấu hình Caddy)
+# Persistent Volumes
 # ------------------------------------------------------------------------------
 volumes:
   caddy_data:
@@ -55,7 +55,7 @@ volumes:
     driver: local
 
 # ------------------------------------------------------------------------------
-# Shared Network (Mạng cầu nối Podman dùng chung giữa các dịch vụ NextTurn)
+# Shared Network
 # ------------------------------------------------------------------------------
 networks:
   nextturn-network:

@@ -1,12 +1,12 @@
 # Valkey Cache & Real-Time Queue Store
 
-This directory contains the Docker Compose stack for **Valkey** (the high-performance, open-source drop-in replacement fork (*bản phân nhánh thay thế trực tiếp*) of Redis supported by the Linux Foundation).
+This directory contains the Docker Compose stack for **Valkey** (the high-performance, open-source drop-in replacement fork of Redis supported by the Linux Foundation).
 
 In NextTurn, Valkey is used for:
 - Real-time queue ticketing numbers and counter state caching.
-- Rapid distributed locks (*khóa phân tán*) to avoid race conditions (*tình trạng tương tranh*) during ticket issuing.
-- WebSocket session tracking and ticket rate limiting (*giới hạn tần suất yêu cầu*).
-- Authentication token blocklists (*danh sách chặn mã xác thực*).
+- Rapid distributed locks to avoid race conditions during ticket issuing.
+- WebSocket session tracking and ticket rate limiting.
+- Authentication token blocklists.
 
 ---
 
@@ -14,8 +14,7 @@ In NextTurn, Valkey is used for:
 
 ```text
 valkey/
-├── docker-compose.yml       # Valkey service orchestration
-├── valkey.conf              # Production-tuned configuration (AOF, LRU eviction, persistence)
+├── docker-compose.yml       # Valkey service orchestration and persistent storage
 ├── .env.example             # Template for Valkey configuration
 ├── .env                     # Local active secrets (ignored by Git)
 └── README.md                # Documentation and operational cheatsheet
@@ -25,10 +24,10 @@ valkey/
 
 ## 🔐 Key Features
 
-- **Standard Compatibility (*Khả năng tương thích chuẩn*)**: Fully wire-compatible with Redis 7.2+ protocol and Spring Data Redis (`Lettuce` / `Jedis`).
-- **Data Persistence (*Độ bền vững dữ liệu*)**: Configured with both RDB periodic snapshots and AOF (Append-Only File) synchronized every second (`appendfsync everysec`).
-- **Memory Protection (*Bảo vệ dung lượng bộ nhớ*)**: Default `maxmemory 512mb` with `volatile-lru` eviction policy so expired tokens and temporary cache keys are purged smoothly.
-- **Isolated Stack (*Ngăn xếp độc lập*)**: Runs as an independent compose stack attached to `nextturn-network`.
+- **Standard Compatibility**: Fully wire-compatible with Redis 7.2+ protocol and Spring Data Redis (`Lettuce` / `Jedis`).
+- **Data Persistence**: Configured with both RDB periodic snapshots and AOF (Append-Only File) synchronized every second (`appendfsync everysec`).
+- **Memory Protection**: Default `maxmemory 512mb` with `volatile-lru` eviction policy so expired tokens and temporary cache keys are purged smoothly.
+- **Isolated Stack**: Runs as an independent compose stack attached to `nextturn-network`.
 
 ---
 

@@ -4,12 +4,16 @@
 # Target Environment: Oracle Linux 9 (ARM64 / aarch64)
 # ==============================================================================
 
-# Container Engine & Compose tooling for Oracle Linux
-CONTAINER_ENGINE := podman
-COMPOSE          ?= podman compose
-
-# Shared Network Initializer Script (POSIX / Bash)
-INIT_NETWORK     := bash ./init-network.sh
+# Environment Adaptive Tooling (Windows Local / Oracle Linux Server)
+ifeq ($(OS),Windows_NT)
+	CONTAINER_ENGINE ?= docker
+	COMPOSE          ?= docker compose
+	INIT_NETWORK     ?= powershell -NoProfile -ExecutionPolicy Bypass -Command "if (-not (docker network ls --filter name=^nextturn-network$$ -q)) { docker network create nextturn-network; Write-Host 'Shared network created.' } else { Write-Host 'Shared network ready.' }"
+else
+	CONTAINER_ENGINE ?= podman
+	COMPOSE          ?= podman compose
+	INIT_NETWORK     := bash ./init-network.sh
+endif
 
 # Compose File Paths
 COMPOSE_ROOT     := docker-compose.yml
@@ -35,7 +39,7 @@ help:
 	@echo "===================================================================="
 	@echo "Usage: make [target]"
 	@echo ""
-	@echo "Global Orchestration (Toàn bộ hạ tầng):"
+	@echo "Global Orchestration:"
 	@echo "  make up               - Initialize Podman network and start ALL services (MySQL, Caddy, Keycloak, Valkey)"
 	@echo "  make down             - Stop ALL services"
 	@echo "  make restart          - Restart ALL services"
@@ -45,27 +49,27 @@ help:
 	@echo "  make network          - Ensure shared Podman network 'nextturn-network' exists"
 	@echo "  make clean            - Teardown all services and delete persistent volumes"
 	@echo ""
-	@echo "MySQL Database (Cơ sở dữ liệu quan hệ cho Backend & Keycloak):"
+	@echo "MySQL Database:"
 	@echo "  make up-mysql         - Start MySQL database container"
 	@echo "  make down-mysql       - Stop MySQL database container"
 	@echo "  make restart-mysql    - Restart MySQL database container"
 	@echo "  make logs-mysql       - Stream logs from MySQL"
 	@echo "  make cli-mysql        - Open interactive MySQL shell"
 	@echo ""
-	@echo "Keycloak IAM Stack (Xác thực danh tính & IAM):"
+	@echo "Keycloak IAM Stack:"
 	@echo "  make up-keycloak      - Start Keycloak IAM (connected to MySQL schema)"
 	@echo "  make down-keycloak    - Stop Keycloak IAM"
 	@echo "  make restart-keycloak - Restart Keycloak IAM"
 	@echo "  make logs-keycloak    - Stream logs from Keycloak"
 	@echo ""
-	@echo "Valkey In-Memory Cache (Bộ nhớ đệm & hàng đợi thời gian thực):"
+	@echo "Valkey In-Memory Cache:"
 	@echo "  make up-valkey        - Start Valkey container"
 	@echo "  make down-valkey      - Stop Valkey container"
 	@echo "  make restart-valkey   - Restart Valkey container"
 	@echo "  make logs-valkey      - Stream logs from Valkey"
 	@echo "  make cli-valkey       - Open interactive Valkey CLI"
 	@echo ""
-	@echo "Caddy Ingress & Frontend Host (Proxy ngược, SSL & Triển khai Frontend):"
+	@echo "Caddy Ingress & Frontend Host:"
 	@echo "  make up-caddy         - Start Caddy ingress & static frontend host"
 	@echo "  make down-caddy       - Stop Caddy"
 	@echo "  make restart-caddy    - Restart Caddy"

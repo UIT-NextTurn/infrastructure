@@ -43,7 +43,7 @@ services:
       start_period: 5s
 
 # ------------------------------------------------------------------------------
-# Persistent Volumes (Ổ lưu trữ dữ liệu bền vững)
+# Persistent Volumes
 # ------------------------------------------------------------------------------
 volumes:
   valkey_data:
@@ -51,7 +51,7 @@ volumes:
     driver: local
 
 # ------------------------------------------------------------------------------
-# Shared Network (Mạng cầu nối dùng chung giữa các dịch vụ NextTurn)
+# Shared Network
 # ------------------------------------------------------------------------------
 networks:
   nextturn-network:

@@ -20,7 +20,7 @@
         X-Content-Type-Options "nosniff"
         Referrer-Policy "strict-origin-when-cross-origin"
         
-        # Cho phép nhúng Widget từ bên thứ ba (bỏ X-Frame-Options SAMEORIGIN)
+        # Cho phép nhúng Widget từ bên thứ ba
         # Cho phép mọi trang web nhúng widget NextTurn qua iframe
         Content-Security-Policy "frame-ancestors *;"
         
@@ -60,11 +60,10 @@
     }
 
     # --------------------------------------------------------------------------
-    # 2. NextTurn Spring Boot Backend REST APIs & WebSocket
+    # 2. NextTurn Spring Boot Backend REST APIs & Server-Sent Events (SSE)
     # --------------------------------------------------------------------------
     @backend_paths {
         path /api/*
-        path /ws/*
         path /actuator/*
         path /swagger-ui/*
         path /v3/api-docs/*
