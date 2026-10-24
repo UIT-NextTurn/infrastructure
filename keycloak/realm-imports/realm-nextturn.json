@@ -23,12 +23,20 @@
     "client": {
       "nextturn-backend": [
         {
+          "name": "SUPERADMIN",
+          "description": "Global Platform Owner - Platform-wide governance and tenant oversight"
+        },
+        {
           "name": "TENANT_ADMIN",
           "description": "Tenant Administrator - Business settings, services, shifts, and staff provisioning"
         },
         {
           "name": "COUNTER_STAFF",
           "description": "Counter Staff - Queue calling, triage intake, and ticket status progression"
+        },
+        {
+          "name": "END_USER",
+          "description": "Public Customer - Virtual queue ticketing and appointment booking"
         }
       ]
     }
@@ -70,11 +78,24 @@
       "enabled": true,
       "publicClient": false,
       "bearerOnly": false,
-      "standardFlowEnabled": false,
-      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "replace-with-secure-backend-secret",
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:3000/auth/callback",
+        "http://127.0.0.1:3000/*",
+        "http://localhost:5173/*",
+        "http://127.0.0.1:5173/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "+"
+      ],
       "defaultClientScopes": [
         "profile",
         "email",
