@@ -55,6 +55,7 @@ help:
 	@echo "  make restart-mysql    - Restart MySQL database container"
 	@echo "  make logs-mysql       - Stream logs from MySQL"
 	@echo "  make cli-mysql        - Open interactive MySQL shell"
+	@echo "  make seed-mysql       - Seed initial central tenants into MySQL nextturn_master"
 	@echo ""
 	@echo "Keycloak IAM Stack:"
 	@echo "  make up-keycloak      - Start Keycloak IAM (connected to MySQL schema)"
@@ -145,6 +146,12 @@ logs-mysql:
 .PHONY: cli-mysql
 cli-mysql:
 	$(CONTAINER_ENGINE) exec -it nextturn-mysql mysql -uroot -proot
+
+.PHONY: seed-mysql
+seed-mysql:
+	@echo "Seeding central master database..."
+	$(CONTAINER_ENGINE) exec -i nextturn-mysql mysql -unextturn -pnextturn_dev_secret nextturn_master < mysql/seed/01_seed_central_tenants.sql
+	@echo "Central master database seeded successfully."
 
 # ------------------------------------------------------------------------------
 # 🔐 Keycloak Identity & Access Management (IAM)
