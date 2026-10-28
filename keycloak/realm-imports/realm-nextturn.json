@@ -79,7 +79,7 @@
       "publicClient": false,
       "bearerOnly": false,
       "standardFlowEnabled": true,
-      "directAccessGrantsEnabled": false,
+      "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "replace-with-secure-backend-secret",
@@ -101,6 +101,77 @@
         "email",
         "organization"
       ]
+    }
+  ],
+  "users": [
+    {
+      "username": "superadmin@nextturn.com",
+      "email": "superadmin@nextturn.com",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Platform",
+      "lastName": "SuperAdmin",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Nextturn123!@#",
+          "temporary": false
+        }
+      ],
+      "clientRoles": {
+        "nextturn-backend": [
+          "SUPERADMIN"
+        ]
+      },
+      "realmRoles": [
+        "ROLE_SUPERADMIN"
+      ]
+    },
+    {
+      "username": "admin@shop-b.internal",
+      "email": "admin@shop-b.internal",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Shop-B",
+      "lastName": "Admin",
+      "attributes": {
+        "tenant_code": ["shop-b"]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Nextturn123!@#",
+          "temporary": false
+        }
+      ],
+      "clientRoles": {
+        "nextturn-backend": [
+          "TENANT_ADMIN"
+        ]
+      }
+    },
+    {
+      "username": "counter01@shop-b.internal",
+      "email": "counter01@shop-b.internal",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Shop-B",
+      "lastName": "Counter01",
+      "attributes": {
+        "tenant_code": ["shop-b"]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Nextturn123!@#",
+          "temporary": false
+        }
+      ],
+      "clientRoles": {
+        "nextturn-backend": [
+          "COUNTER_STAFF"
+        ]
+      }
     }
   ]
 }
