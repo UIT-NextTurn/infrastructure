@@ -1,6 +1,7 @@
 {
   "realm": "nextturn",
   "displayName": "NextTurn Multi-Tenant Platform",
+  "loginTheme": "nextturn",
   "enabled": true,
   "sslRequired": "external",
   "organizationsEnabled": true,
@@ -70,6 +71,19 @@
     "profile",
     "email"
   ],
+  "components": {
+    "org.keycloak.userprofile.UserProfileProvider": [
+      {
+        "providerId": "declarative-user-profile",
+        "subComponents": {},
+        "config": {
+          "kc.user.profile.config": [
+            "{\"attributes\":[{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255},\"username-prohibited-characters\":{},\"up-username-not-idn-homograph\":{}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{},\"length\":{\"max\":255}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"firstName\",\"displayName\":\"${firstName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"lastName\",\"displayName\":\"${lastName}\",\"validations\":{\"length\":{\"max\":255},\"person-name-prohibited-characters\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\",\"user\"]},\"multivalued\":false},{\"name\":\"tenant_code\",\"displayName\":\"Tenant Code\",\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\"]},\"multivalued\":false}],\"groups\":[{\"name\":\"user-metadata\",\"displayHeader\":\"User metadata\",\"displayDescription\":\"Attributes, which refer to user metadata\"}],\"unmanagedAttributePolicy\":\"ENABLED\"}"
+          ]
+        }
+      }
+    ]
+  },
   "clients": [
     {
       "clientId": "nextturn-backend",
@@ -82,7 +96,7 @@
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": true,
       "clientAuthenticatorType": "client-secret",
-      "secret": "replace-with-secure-backend-secret",
+      "secret": "${KEYCLOAK_CLIENT_SECRET}",
       "redirectUris": [
         "http://localhost:3000/*",
         "http://localhost:3000/auth/callback",
@@ -100,17 +114,36 @@
         "profile",
         "email",
         "organization"
+      ],
+      "protocolMappers": [
+        {
+          "name": "tenant-code-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "tenant_code",
+            "claim.name": "tenant_code",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true",
+            "multivalued": "false",
+            "aggregate.attrs": "false"
+          }
+        }
       ]
     }
   ],
   "users": [
     {
-      "username": "superadmin@nextturn.com",
-      "email": "superadmin@nextturn.com",
+      "username": "superadmin",
+      "email": "phanhuynhhung0707@gmail.com",
       "enabled": true,
       "emailVerified": true,
-      "firstName": "Platform",
-      "lastName": "SuperAdmin",
+      "firstName": "Phan",
+      "lastName": "Hung",
       "credentials": [
         {
           "type": "password",
@@ -128,14 +161,16 @@
       ]
     },
     {
-      "username": "admin@shop-b.internal",
-      "email": "admin@shop-b.internal",
+      "username": "admin-shop-b",
+      "email": "admin@shop-b.com",
       "enabled": true,
       "emailVerified": true,
-      "firstName": "Shop-B",
-      "lastName": "Admin",
+      "firstName": "Admin",
+      "lastName": "Shop B",
       "attributes": {
-        "tenant_code": ["shop-b"]
+        "tenant_code": [
+          "shop-b"
+        ]
       },
       "credentials": [
         {
@@ -151,14 +186,66 @@
       }
     },
     {
-      "username": "counter01@shop-b.internal",
-      "email": "counter01@shop-b.internal",
+      "username": "admin-spa-a",
+      "email": "admin@spa-a.com",
       "enabled": true,
       "emailVerified": true,
-      "firstName": "Shop-B",
-      "lastName": "Counter01",
+      "firstName": "Admin",
+      "lastName": "Spa A",
       "attributes": {
-        "tenant_code": ["shop-b"]
+        "tenant_code": [
+          "spa-a"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Nextturn123!@#",
+          "temporary": false
+        }
+      ],
+      "clientRoles": {
+        "nextturn-backend": [
+          "TENANT_ADMIN"
+        ]
+      }
+    },
+    {
+      "username": "counter-shop-b",
+      "email": "counter@shop-b.com",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Counter",
+      "lastName": "Shop B",
+      "attributes": {
+        "tenant_code": [
+          "shop-b"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Nextturn123!@#",
+          "temporary": false
+        }
+      ],
+      "clientRoles": {
+        "nextturn-backend": [
+          "COUNTER_STAFF"
+        ]
+      }
+    },
+    {
+      "username": "counter-spa-a",
+      "email": "counter@spa-a.com",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Counter",
+      "lastName": "Spa A",
+      "attributes": {
+        "tenant_code": [
+          "spa-a"
+        ]
       },
       "credentials": [
         {

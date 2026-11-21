@@ -33,6 +33,10 @@ services:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
 
+      # Realm import placeholder substitution for OIDC client secret
+      KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET}
+      JAVA_OPTS_APPEND: "-Dkeycloak.migration.replace-placeholders=true -DKEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}"
+
       # HTTP and Network configuration
       KC_HTTP_ENABLED: "true"
       KC_HOSTNAME_STRICT: "false"
@@ -48,6 +52,8 @@ services:
     volumes:
       # Mount directory for auto-importing realms on startup
       - ./realm-imports:/opt/keycloak/data/import:ro,z
+      # Mount custom Keycloak themes for dynamic tenant & platform branding
+      - ./themes:/opt/keycloak/themes:ro,z
     ports:
       # Port 8180 on host avoids conflict with Spring Boot backend (server.port: 8080)
       - "${KEYCLOAK_PORT:-8180}:8080"

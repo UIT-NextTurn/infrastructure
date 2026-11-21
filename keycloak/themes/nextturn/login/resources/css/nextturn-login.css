@@ -1,0 +1,311 @@
+/**
+ * NextTurn Keycloak Login Theme Stylesheet
+ * Aligned with Nuanced Swiss Precision (design-system/MASTER.md)
+ */
+
+:root {
+  --nt-canvas-bg: #F8FAFC;
+  --nt-card-bg: #FFFFFF;
+  --nt-text-primary: #0F172A;
+  --nt-text-secondary: #475569;
+  --nt-text-tertiary: #94A3B8;
+  --nt-border-subtle: #E2E8F0;
+  --nt-border-strong: #CBD5E1;
+  --nt-brand-primary: #1E40AF;
+  --nt-brand-accent: #2563EB;
+  --nt-brand-hover: #1D4ED8;
+  --nt-radius-card: 16px;
+  --nt-radius-input: 8px;
+  --nt-shadow-card: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+}
+
+body.login-pf-page,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--nt-canvas-bg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--nt-text-primary);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Container & Card */
+.card-pf,
+.login-pf-page .card-pf,
+.login-container {
+  background: var(--nt-card-bg);
+  border: 1px solid var(--nt-border-subtle);
+  border-radius: var(--nt-radius-card);
+  box-shadow: var(--nt-shadow-card);
+  max-width: 440px;
+  width: 100%;
+  margin: 24px auto;
+  padding: 36px 32px 32px;
+  box-sizing: border-box;
+  transition: all 0.25s ease-in-out;
+}
+
+/* Brand Header Area */
+.nextturn-brand-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.brand-logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  min-height: 64px;
+}
+
+.brand-logo {
+  max-height: 56px;
+  max-width: 220px;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.brand-logo:hover {
+  transform: scale(1.02);
+}
+
+.brand-title {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--nt-text-primary);
+  letter-spacing: -0.4px;
+  line-height: 1.25;
+}
+
+.brand-subtitle {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--nt-text-secondary);
+  line-height: 1.4;
+}
+
+/* Badges */
+.brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.badge-tenant {
+  background-color: #EFF6FF;
+  color: #1E40AF;
+  border: 1px solid #BFDBFE;
+}
+
+.badge-tenant::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #2563EB;
+}
+
+.badge-superadmin {
+  background-color: #EEF2FF;
+  color: #4F46E5;
+  border: 1px solid #C7D2FE;
+}
+
+.badge-superadmin::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #6366F1;
+}
+
+/* Form Inputs */
+.form-group {
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nt-text-primary);
+  margin-bottom: 6px;
+}
+
+.form-control,
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  box-sizing: border-box;
+  font-size: 14px;
+  color: var(--nt-text-primary);
+  background-color: #FFFFFF;
+  border: 1px solid var(--nt-border-strong);
+  border-radius: var(--nt-radius-input);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus {
+  border-color: var(--nt-brand-accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+}
+
+/* Submit & Action Buttons */
+.btn-primary,
+input[type="submit"],
+button[type="submit"] {
+  width: 100%;
+  height: 44px;
+  background-color: var(--nt-brand-primary);
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--nt-radius-input);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 22px;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+.btn-primary:hover,
+input[type="submit"]:hover,
+button[type="submit"]:hover {
+  background-color: var(--nt-brand-hover);
+}
+
+.btn-primary:active,
+input[type="submit"]:active,
+button[type="submit"]:active {
+  transform: scale(0.99);
+}
+
+/* Alert / Error messages */
+.alert,
+.alert-error,
+.alert-danger {
+  background-color: #FEF2F2;
+  border: 1px solid #FCA5A5;
+  color: #991B1B;
+  padding: 12px 14px;
+  border-radius: var(--nt-radius-input);
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+/* Identity Provider / SSO Section */
+#kc-social-providers,
+.social-providers {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--nt-border-subtle);
+  text-align: center;
+}
+
+.social-providers-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--nt-text-tertiary);
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 42px;
+  background-color: #F8FAFC;
+  border: 1px solid var(--nt-border-strong);
+  border-radius: var(--nt-radius-input);
+  color: var(--nt-text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.social-link:hover {
+  background-color: #F1F5F9;
+  border-color: #94A3B8;
+}
+
+/* =============================================================================
+ * Superadmin Obsidian Dark Theme Mode
+ * ============================================================================= */
+body.mode-superadmin {
+  background-color: #070A10;
+}
+
+body.mode-superadmin .card-pf,
+.mode-superadmin .login-container {
+  background: #0B0F19;
+  border-color: #1E293B;
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.5);
+}
+
+body.mode-superadmin .brand-title {
+  color: #F8FAFC;
+}
+
+body.mode-superadmin .brand-subtitle {
+  color: #94A3B8;
+}
+
+body.mode-superadmin .form-group label {
+  color: #E2E8F0;
+}
+
+body.mode-superadmin .form-control,
+body.mode-superadmin input[type="text"],
+body.mode-superadmin input[type="password"] {
+  background-color: #0F172A;
+  border-color: #334155;
+  color: #F8FAFC;
+}
+
+body.mode-superadmin .form-control:focus,
+body.mode-superadmin input[type="text"]:focus,
+body.mode-superadmin input[type="password"]:focus {
+  border-color: #6366F1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+}
+
+body.mode-superadmin .btn-primary,
+body.mode-superadmin input[type="submit"],
+body.mode-superadmin button[type="submit"] {
+  background-color: #6366F1;
+}
+
+body.mode-superadmin .btn-primary:hover,
+body.mode-superadmin input[type="submit"]:hover,
+body.mode-superadmin button[type="submit"]:hover {
+  background-color: #4F46E5;
+}
